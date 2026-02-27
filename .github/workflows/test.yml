@@ -1,0 +1,43 @@
+name: Test Automation E2E
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Display Node.js version
+        run: node --version
+
+      - name: Run structure tests
+        run: npm run test:structure
+
+      - name: Run markdown validation tests
+        run: npm run test:markdown
+
+      - name: Run template validation tests
+        run: npm run test:templates
+
+      - name: Run link validation tests
+        run: npm run test:links
+
+      - name: Run full test suite
+        run: npm test
